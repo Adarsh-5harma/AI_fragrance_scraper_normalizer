@@ -1,0 +1,55 @@
+# config/sites.yaml
+# Configuration for all Chilean perfume retailers
+
+sites:
+  lodoro:
+    name: "Lodoro"
+    url: "https://www.lodoro.cl"
+    api_endpoint: "/products.json"
+    enabled: true
+    priority: 1
+    headers:
+      User-Agent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+    rate_limit: 1
+    max_pages: 50
+    
+  multimarcas:
+    name: "Multimarcas"
+    url: "https://www.multimarcas.cl"
+    api_endpoint: "/products.json"
+    enabled: true
+    priority: 2
+    headers:
+      User-Agent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+    rate_limit: 1
+    max_pages: 50
+    
+  paris:
+    name: "Paris"
+    url: "https://www.paris.cl"
+    api_endpoint: "/products.json"
+    enabled: false
+    priority: 3
+    headers:
+      User-Agent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+    rate_limit: 2
+    max_pages: 50
+    
+  ripley:
+    name: "Ripley"
+    url: "https://www.ripley.cl"
+    api_endpoint: "/products.json"
+    enabled: false
+    priority: 4
+    headers:
+      User-Agent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+    rate_limit: 2
+    max_pages: 50
+
+# Global settings
+settings:
+  default_delay: 1
+  max_retries: 3
+  timeout: 15
+  output_dir: "data"
+  log_dir: "logs"
