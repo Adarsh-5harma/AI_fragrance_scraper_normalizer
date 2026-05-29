@@ -68,25 +68,43 @@ def extract_type(text):
 # Output: "Mujer"
 # ─────────────────────────────────────────────────────────────
 def extract_gender(text, tags=None):
-    text = str(text) if text else ""
+    text = str(text).lower() if text else ""
     tags = tags or []
 
-    # Check the title text first
-    if re.search(r'\bMujer\b|\bWoman\b|\bFemme\b|\bHer\b', text, re.IGNORECASE):
-        return "Mujer"
-    if re.search(r'\bHombre\b|\bMan\b|\bHomme\b|\bHim\b', text, re.IGNORECASE):
-        return "Hombre"
-    if re.search(r'\bUnisex\b|\bMixto\b', text, re.IGNORECASE):
-        return "Unisex"
+    # ── Female signals ───────────────────────────────────────
+    female_words = [
+        "mujer", "woman", "women", "femme", "pour femme",
+        "for women", "for her", "girl", "feminine", "lady",
+        "her ", " her", "ella"
+    ]
+    # ── Male signals ─────────────────────────────────────────
+    male_words = [
+        "hombre", " man", "men ", " men", "homme", "pour homme",
+        "for men", "for him", "boy", "masculine", "him ", " him",
+        "caballero"
+    ]
+    # ── Unisex signals ───────────────────────────────────────
+    unisex_words = ["unisex", "mixto", "for all", "everyone"]
 
-    # If not found in title, check tags (Shopify gives us these)
-    for tag in tags:
-        tag_lower = tag.lower()
-        if any(w in tag_lower for w in ['mujer', 'woman', 'femme', 'her']):
+    # Check title
+    for w in female_words:
+        if w in text:
             return "Mujer"
-        if any(w in tag_lower for w in ['hombre', 'man', 'homme', 'him']):
+    for w in male_words:
+        if w in text:
             return "Hombre"
-        if 'unisex' in tag_lower:
+    for w in unisex_words:
+        if w in text:
+            return "Unisex"
+
+    # Check Shopify tags
+    for tag in tags:
+        t = tag.lower()
+        if any(w in t for w in ["mujer", "woman", "femme", "girl", "her"]):
+            return "Mujer"
+        if any(w in t for w in ["hombre", "man", "homme", "boy", "him"]):
+            return "Hombre"
+        if "unisex" in t:
             return "Unisex"
 
     return "Unknown"
