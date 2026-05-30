@@ -25,7 +25,7 @@ HEADERS = {
 }
 
 # ── Categories to scrape ─────────────────────────────────────
-# Gender is known from the URL — no AI needed
+
 CATEGORIES = [
     {"url": f"{BASE_URL}/hombre/",          "gender": "Hombre"},
     {"url": f"{BASE_URL}/mujer/",           "gender": "Mujer"},
@@ -44,7 +44,7 @@ FIELDNAMES = [
 
 def fetch_page(url):
     try:
-        response = requests.get(url, headers=HEADERS, timeout=15)
+        response = requests.get(url, headers=HEADERS, timeout=30)
         if response.status_code != 200:
             return None
         return BeautifulSoup(response.text, "html.parser")

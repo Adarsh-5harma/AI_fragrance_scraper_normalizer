@@ -6,6 +6,7 @@ from datetime import datetime
 from scrapers.multimarcas import scrape_multimarcas
 from scrapers.lodoro import scrape_lodoro
 from scrapers.elite import scrape_elite
+from scrapers.lacasa import scrape_lacasa
 
 OUTPUT_FILE = "data/master_catalog.csv"
 
@@ -26,7 +27,7 @@ def run_all_scrapers():
     print(f"Started: {start.strftime('%Y-%m-%d %H:%M:%S')}")
     print("=" * 60)
 
-    print("\n[1/3] Scraping multimarcasmayorista.cl...")
+    print("\n[1/4] Scraping multimarcasmayorista.cl...")
     try:
         rows = scrape_multimarcas()
         all_rows.extend(rows)
@@ -34,7 +35,7 @@ def run_all_scrapers():
     except Exception as e:
         print(f"      ✗ Failed: {e}")
 
-    print("\n[2/3] Scraping lodoro.cl...")
+    print("\n[2/4] Scraping lodoro.cl...")
     try:
         rows = scrape_lodoro()
         all_rows.extend(rows)
@@ -42,9 +43,17 @@ def run_all_scrapers():
     except Exception as e:
         print(f"      ✗ Failed: {e}")
 
-    print("\n[3/3] Scraping eliteperfumes-distribuidor.cl...")
+    print("\n[3/4] Scraping eliteperfumes-distribuidor.cl...")
     try:
         rows = scrape_elite()
+        all_rows.extend(rows)
+        print(f"      ✓ {len(rows)} products")
+    except Exception as e:
+        print(f"      ✗ Failed: {e}")
+    
+    print("\n[4/4] Scraping lacasadelperfume.cl...")
+    try:
+        rows = scrape_lacasa()
         all_rows.extend(rows)
         print(f"      ✓ {len(rows)} products")
     except Exception as e:
