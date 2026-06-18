@@ -2,20 +2,22 @@
 # ─────────────────────────────────────────────────────────────
 # WHAT THIS DOES:
 #   Queries the database for all products with Unknown gender
-#   or Unknown perfume_type, sends them to Claude AI in batches,
-#   and updates the database with the correct values.
+#   or Unknown perfume_type, sends them to Qwen AI (via Groq) 
+#   in batches, and updates the database with the correct values.
 #
 # HOW TO RUN:
 #   1. Set your API key in PowerShell:
-#      $env:ANTHROPIC_API_KEY = "sk-ant-...your key..."
+#      $env:GROQ_API_KEY = "gsk_...your key..."
 #
 #   2. Run this script:
 #      python normalize.py
 #
-# COST: ~$0.05-0.10 for the full database (one-time run)
+# COST: $0.00 (Groq Free Tier)
 # ─────────────────────────────────────────────────────────────
 
 import os
+from dotenv import load_dotenv
+load_dotenv() # This reads the .env file and puts the key into os.environ
 import sys
 import time
 
@@ -28,14 +30,14 @@ from catalog.models import Product
 from utils.ai_normalizer import normalize_batch
 
 # ── Config ───────────────────────────────────────────────────
-BATCH_SIZE   = 30    # products per API call (keep under 50 for reliability)
+BATCH_SIZE   = 10    # products per API call (keep under 50 for reliability)
 DELAY_SEC    = 0.5   # seconds between batches (avoids rate limiting)
 DRY_RUN      = False # set True to preview without saving to DB
 
 
 def run_normalization():
     print("=" * 60)
-    print("AI NORMALIZATION — FIXING UNKNOWN FIELDS")
+    print("AI NORMALIZATION — FIXING UNKNOWN FIELDS (QWEN 2.5 32B)")
     print("=" * 60)
 
     # ── Find products that need fixing ───────────────────────
@@ -53,8 +55,7 @@ def run_normalization():
     print(f"\n  Products with Unknown fields: {total}")
     print(f"  Batch size: {BATCH_SIZE} products per API call")
     print(f"  Estimated API calls: {(total // BATCH_SIZE) + 1}")
-    estimated_cost = total * 80 / 1_000_000 * 0.25 + total * 40 / 1_000_000 * 1.25
-    print(f"  Estimated cost: ~${estimated_cost:.3f}")
+    print(f"  Estimated cost: $0.00 (Groq Free Tier)")
 
     if total == 0:
         print("\n✓ Nothing to fix — all products already normalized!")
@@ -83,7 +84,7 @@ def run_normalization():
         # Extract just the product names for the API call
         names = [p["product_name"] for p in batch]
 
-        # Call Claude AI
+        # Call Qwen AI (via Groq)
         try:
             ai_results = normalize_batch(names)
         except Exception as e:
@@ -147,15 +148,15 @@ def run_normalization():
 
 
 if __name__ == "__main__":
-    # Quick check: is the API key set?
-    if not os.environ.get("GEMINI_API_KEY"):
+    # Quick check: is the Groq API key set?
+    if not os.environ.get("GROQ_API_KEY"):
         print("\n" + "=" * 60)
-        print("ERROR: GEMINI_API_KEY not set")
+        print("ERROR: GROQ_API_KEY not set")
         print("=" * 60)
         print("\nRun this first in PowerShell:\n")
-        print('  $env:GEMINI_API_KEY = "AIza...your key here..."')
-        print("\nGet your FREE key at: https://aistudio.google.com/apikey")
-        print("(Sign in with Google → Get API Key → Create API key)\n")
+        print('  $env:GROQ_API_KEY = "gsk_...your key here..."')
+        print("\nGet your FREE key at: https://console.groq.com/keys")
+        print("(Sign in with GitHub/Google → Create API Key)\n")
         sys.exit(1)
 
     run_normalization()
